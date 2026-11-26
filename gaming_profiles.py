@@ -58,3 +58,12 @@ GAMING PROFILE — MINECRAFT:
 - Do not invent items, achievements, or events that are not present.
 """
     return ""
+
+
+def restore_gaming_mode(env, manifest):
+    """Restore a persisted profile safely; legacy or malformed manifests use off."""
+    raw = manifest.get("gaming_mode", "off") if isinstance(manifest, dict) else "off"
+    try:
+        return apply_gaming_mode(env, raw)
+    except ValueError:
+        return apply_gaming_mode(env, "off")
