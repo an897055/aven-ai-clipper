@@ -14,7 +14,6 @@ from gaming_profiles import (
         (None, "off"),
         ("", "off"),
         ("  PUBG ", "pubg"),
-        ("BGMI".lower(), "bgmi"),  # Unsupported aliases must not silently map.
         ("Minecraft", "minecraft"),
         ("OFF", "off"),
     ],
@@ -27,7 +26,7 @@ def test_normalize_gaming_mode(raw, expected):
         assert normalize_gaming_mode(raw) == expected
 
 
-@pytest.mark.parametrize("mode", ["", "valorant", "pubg-mobile", "minecraft-java", "true", 1])
+@pytest.mark.parametrize("mode", ["", "BGMI", "valorant", "pubg-mobile", "minecraft-java", "true", 1])
 def test_rejects_unknown_gaming_modes(mode):
     with pytest.raises(ValueError, match="gaming_mode"):
         normalize_gaming_mode(mode)
