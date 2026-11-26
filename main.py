@@ -2696,6 +2696,34 @@ def score_batch_size():
     return 3 if llm_backend.active() else 8
 
 
+def _aven_gaming_guidance():
+    """Extra selection guidance for the optional AVEN gaming profiles."""
+    mode = os.environ.get("AVEN_GAMING_MODE", "off").strip().lower()
+    if mode == "pubg":
+        return """
+GAMING PROFILE — PUBG / BGMI:
+- Prefer genuine high-skill or high-stakes moments: clutch wins, squad wipes,
+  1vX fights, clean headshots, sprays, sniper shots, close escapes, revives
+  under pressure, final-circle decisions, rare/valuable loot, funny fails,
+  unexpected bugs, and surprising tactical plays.
+- Keep enough lead-in to understand the fight and enough aftermath to see the
+  knock, elimination, win, or failure. Do not invent kills or outcomes.
+- A loud gunfight alone is not automatically a highlight; prioritize clarity,
+  skill, tension, surprise, and payoff.
+"""
+    if mode == "minecraft":
+        return """
+GAMING PROFILE — MINECRAFT:
+- Prefer satisfying builds, clever redstone, rare discoveries, strong
+  transformations, clutch survival, boss fights, speedrun moments, parkour,
+  unexpected mobs, funny fails, near-death escapes, and surprising secrets.
+- Keep the setup that makes a build, discovery, trick, or danger understandable,
+  then include its payoff. Do not label ordinary mining or walking as a highlight.
+- Do not invent items, achievements, or events that are not present.
+"""
+    return ""
+
+
 def get_viral_clips(transcript_result, video_duration, viewer_clips=None):
     """Two-pass clip selection: score transcript windows, then detail the best.
 
@@ -2774,7 +2802,7 @@ def get_viral_clips(transcript_result, video_duration, viewer_clips=None):
         def _score_prompt(ws):
             return gemini_worker.SCORE_PROMPT_TEMPLATE.format(
                 video_duration=video_duration, language=language,
-                windows_json=json.dumps(_payload(ws), ensure_ascii=False))
+                windows_json=json.dumps(_payload(ws), ensure_ascii=False)) + _aven_gaming_guidance()
 
         for batch in score_batches(windows, SCORE_BATCH):
             scored.extend(_run_stage_split(
@@ -2815,7 +2843,7 @@ def get_viral_clips(transcript_result, video_duration, viewer_clips=None):
                     video_duration=video_duration, language=language,
                     min_clips=lo, max_clips=hi,
                     min_secs=min_secs, max_secs=max_secs,
-                    windows_json=json.dumps(_payload(ws), ensure_ascii=False))
+                    windows_json=json.dumps(_payload(ws), ensure_ascii=False)) + _aven_gaming_guidance()
             return build
 
         shorts = []
@@ -3007,7 +3035,7 @@ def _visual_pass(client, model_name, video_path, duration, language,
         prompt = gemini_worker.VISUAL_PROMPT_TEMPLATE.format(
             video_duration=duration, language=language,
             min_clips=min_clips, max_clips=max_clips,
-            min_secs=min_secs, max_secs=max_secs) + (hint or "")
+            min_secs=min_secs, max_secs=max_secs) + _aven_gaming_guidance() + (hint or "")
         config = genai_types.GenerateContentConfig(
             response_mime_type="application/json",
             response_schema=gemini_worker.VisualResponse,
