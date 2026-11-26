@@ -37,7 +37,7 @@ Build a web-based AI clipping editor branded as AVEN AI CLIPPER, based on OpenSh
 - The GitHub connector successfully wrote these files to the development branch.
 - Added `tests/test_gaming_profiles.py` covering accepted modes, rejected values/aliases, general mode, PUBG and Minecraft prompt guidance, environment normalization, and per-job environment isolation.
 - Added `workflow_dispatch` so CI can also be started manually from GitHub Actions.
-- Tests have NOT yet been executed in this session. The CI workflow now includes pushes to `aven-gaming-mode`, but GitHub currently reports zero workflow runs for this branch; verify Actions after the next push/PR.
+- Tests have NOT yet been executed in this session. The latest commit has zero GitHub check runs/statuses so far; the connector cannot manually dispatch Actions. Confirm whether GitHub Actions is enabled for this fork and inspect the run after a push.
 - The project has NOT yet been built or run locally; frontend compilation, Python syntax/tests, and an end-to-end test with sample gaming footage are still required.
 - Do not claim the app is deployed or production-ready.
 - User's laptop has 8 GB RAM, so local AI inference may be slow; prefer a lightweight frontend test and consider remote/cloud inference for heavy video processing.
@@ -49,10 +49,11 @@ Build a web-based AI clipping editor branded as AVEN AI CLIPPER, based on OpenSh
 ## Next work
 1. Inspect the complete diff and run the project's available frontend and Python tests; confirm GitHub Actions starts on the development branch.
 2. Run `pytest tests/test_gaming_profiles.py` and the full CI suite; fix any failures before adding more features.
-3. Review job recovery so a resumed job retains its selected gaming profile, if the current recovery manifest supports preserving per-job environment settings.
-4. Test with one PUBG/BGMI recording and one Minecraft recording; verify clip selection is grounded in visible/audio evidence.
-5. Continue branding the visible product as AVEN AI CLIPPER without removing upstream attribution or license notices.
-6. Only after tests pass, prepare deployment instructions and ask the user for any required API keys/permissions.
+3. Verify that resumed jobs preserve PUBG/BGMI or Minecraft mode (implemented; automated tests added, execution pending).
+4. Continue static review and add targeted tests for request validation and resume behavior where practical.
+5. Test with one PUBG/BGMI recording and one Minecraft recording; verify clip selection is grounded in visible/audio evidence.
+6. Continue branding the visible product as AVEN AI CLIPPER without removing upstream attribution or license notices.
+7. Only after tests pass, prepare deployment instructions and ask the user for any required API keys/permissions.
 
 ## Working agreement
 The assistant should make code changes directly on `aven-gaming-mode` where connector permissions allow, explain only when user action is required, and never say background work continues after the chat is closed.
