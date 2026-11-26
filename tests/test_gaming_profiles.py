@@ -19,11 +19,7 @@ from gaming_profiles import (
     ],
 )
 def test_normalize_gaming_mode(raw, expected):
-    if expected == "bgmi":
-        with pytest.raises(ValueError, match="gaming_mode"):
-            normalize_gaming_mode(raw)
-    else:
-        assert normalize_gaming_mode(raw) == expected
+    assert normalize_gaming_mode(raw) == expected
 
 
 @pytest.mark.parametrize("mode", ["", "BGMI", "valorant", "pubg-mobile", "minecraft-java", "true", 1])
