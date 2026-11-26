@@ -41,7 +41,7 @@ import source_cache
 import yt_account
 import api_role as _api_role
 from jsonfile import write_json_atomic
-from gaming_profiles import apply_gaming_mode
+from gaming_profiles import apply_gaming_mode, restore_gaming_mode
 import fdlimit
 
 load_dotenv()
@@ -2631,13 +2631,8 @@ def _register_resumed(picked) -> int:
         # Rebuild env from scratch — the manifest holds no secrets. Managed
         # (cloud) jobs get the server key; self-host falls back to its env key.
         env = child_env()
-        # Older manifests have no profile and resume as general video. Validate
-        # persisted values so a malformed manifest cannot inject arbitrary env.
-        try:
-            apply_gaming_mode(env, m.get("gaming_mode", "off"))
-        except ValueError:
-            print(f"⚠️ Invalid gaming profile in resume manifest for {job_id}; using general mode.")
-            apply_gaming_mode(env, "off")
+        # Older manifests have no profile and resume as general video.
+        restore_gaming_mode(env, m)
         try:
             from cloud import proxy_ledger as _pl
             if BILLING_ENABLED and _pl.budget_exceeded_sync():
