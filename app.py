@@ -41,7 +41,7 @@ import source_cache
 import yt_account
 import api_role as _api_role
 from jsonfile import write_json_atomic
-from gaming_profiles import normalize_gaming_mode
+from gaming_profiles import apply_gaming_mode
 import fdlimit
 
 load_dotenv()
@@ -6470,13 +6470,10 @@ async def process_endpoint(
     # Optional gaming-aware highlight selection. Whitelist values so this
     # request field can only select a known prompt profile.
     try:
-        gaming_mode = normalize_gaming_mode(gaming_mode)
+        gaming_mode = apply_gaming_mode(env, gaming_mode)
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
-    # Never inherit a server-wide profile into a general-video job.
-    env.pop("AVEN_GAMING_MODE", None)
     if gaming_mode != "off":
-        env["AVEN_GAMING_MODE"] = gaming_mode
         print(f"[gaming-mode] job={job_id} profile={gaming_mode}")
 
     n_clips = _gen_control(target_clips, "target_clips", 1, 15, integer=True)
