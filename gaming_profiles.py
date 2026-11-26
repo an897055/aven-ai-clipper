@@ -17,6 +17,19 @@ def normalize_gaming_mode(value):
     return mode
 
 
+def apply_gaming_mode(env, value):
+    """Set a validated per-job profile and clear any inherited profile.
+
+    Mutates the supplied child-process environment and returns the normalized
+    mode. This keeps general-video jobs isolated from stale server settings.
+    """
+    selected = normalize_gaming_mode(value)
+    env.pop("AVEN_GAMING_MODE", None)
+    if selected != "off":
+        env["AVEN_GAMING_MODE"] = selected
+    return selected
+
+
 def gaming_guidance(mode=None):
     """Return grounded highlight-selection instructions for the selected game."""
     selected = normalize_gaming_mode(
