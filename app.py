@@ -41,6 +41,7 @@ import source_cache
 import yt_account
 import api_role as _api_role
 from jsonfile import write_json_atomic
+from gaming_profiles import normalize_gaming_mode
 import fdlimit
 
 load_dotenv()
@@ -6468,9 +6469,10 @@ async def process_endpoint(
 
     # Optional gaming-aware highlight selection. Whitelist values so this
     # request field can only select a known prompt profile.
-    gaming_mode = str(gaming_mode or "off").strip().lower()
-    if gaming_mode not in {"off", "pubg", "minecraft"}:
-        raise HTTPException(status_code=400, detail="gaming_mode must be off, pubg, or minecraft")
+    try:
+        gaming_mode = normalize_gaming_mode(gaming_mode)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
     if gaming_mode != "off":
         env["AVEN_GAMING_MODE"] = gaming_mode
         print(f"[gaming-mode] job={job_id} profile={gaming_mode}")
