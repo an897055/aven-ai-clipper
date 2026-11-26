@@ -41,6 +41,7 @@ import layout_picker
 import llm_backend
 import yt_account
 import twitch_signals
+from gaming_profiles import gaming_guidance
 from clip_selection import (build_transcript_windows, clip_count_targets,
                             clip_duration_bounds, dedupe_overlapping,
                             detail_plan, vision_targets,
@@ -2774,7 +2775,7 @@ def get_viral_clips(transcript_result, video_duration, viewer_clips=None):
         def _score_prompt(ws):
             return gemini_worker.SCORE_PROMPT_TEMPLATE.format(
                 video_duration=video_duration, language=language,
-                windows_json=json.dumps(_payload(ws), ensure_ascii=False))
+                windows_json=json.dumps(_payload(ws), ensure_ascii=False)) + gaming_guidance()
 
         for batch in score_batches(windows, SCORE_BATCH):
             scored.extend(_run_stage_split(
@@ -2815,7 +2816,7 @@ def get_viral_clips(transcript_result, video_duration, viewer_clips=None):
                     video_duration=video_duration, language=language,
                     min_clips=lo, max_clips=hi,
                     min_secs=min_secs, max_secs=max_secs,
-                    windows_json=json.dumps(_payload(ws), ensure_ascii=False))
+                    windows_json=json.dumps(_payload(ws), ensure_ascii=False)) + gaming_guidance()
             return build
 
         shorts = []
@@ -3007,7 +3008,7 @@ def _visual_pass(client, model_name, video_path, duration, language,
         prompt = gemini_worker.VISUAL_PROMPT_TEMPLATE.format(
             video_duration=duration, language=language,
             min_clips=min_clips, max_clips=max_clips,
-            min_secs=min_secs, max_secs=max_secs) + (hint or "")
+            min_secs=min_secs, max_secs=max_secs) + gaming_guidance() + (hint or "")
         config = genai_types.GenerateContentConfig(
             response_mime_type="application/json",
             response_schema=gemini_worker.VisualResponse,

@@ -1,4 +1,25 @@
-# OpenShorts.app
+# AVEN AI CLIPPER
+
+**An AI-powered video clipping workspace for creators, with dedicated PUBG/BGMI and Minecraft highlight profiles.**
+
+AVEN AI CLIPPER is a customized development fork of [OpenShorts](https://github.com/mutonby/openshorts). It retains the upstream project's open-source license and attribution. The gaming profiles are an additional feature under active development; they guide AI highlight selection and do not guarantee a perfect clip or replace review.
+
+**Upstream project overview:** [OpenShorts README](https://github.com/mutonby/openshorts).
+
+---
+
+## AVEN Gaming Features (in development)
+
+- **General videos:** uses the upstream highlight-selection behavior.
+- **PUBG / BGMI:** prioritizes grounded clutches, squad wipes, headshots, sniper plays, tense revives, final-circle decisions and funny failures.
+- **Minecraft:** prioritizes builds, redstone, discoveries, boss fights, parkour, survival clutches and surprising moments.
+- **Evidence-first prompts:** instruct the model not to invent kills, items, achievements or outcomes.
+
+Select a profile under the clip generator's Advanced Options. These profiles influence AI selection prompts; end-to-end behavior still needs validation with real recordings.
+
+---
+
+## Upstream OpenShorts features
 
 **The open-source OpusClip alternative.** Turn long videos into viral 9:16 Shorts, TikToks and Reels. Self-host free (MIT) or use the hosted cloud.
 
