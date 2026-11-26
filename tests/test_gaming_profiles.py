@@ -3,6 +3,7 @@ import pytest
 
 from gaming_profiles import (
     SUPPORTED_GAMING_MODES,
+    apply_gaming_mode,
     gaming_guidance,
     normalize_gaming_mode,
 )
@@ -57,3 +58,21 @@ def test_minecraft_profile_prioritizes_gameplay_discoveries():
 def test_environment_profile_is_normalized(monkeypatch):
     monkeypatch.setenv("AVEN_GAMING_MODE", "  MINECRAFT ")
     assert "GAMING PROFILE — MINECRAFT" in gaming_guidance()
+
+
+@pytest.mark.parametrize("mode", ["off", "pubg", "minecraft"])
+def test_apply_gaming_mode_sets_exact_child_profile(mode):
+    env = {"PATH": "/usr/bin", "AVEN_GAMING_MODE": "stale"}
+    assert apply_gaming_mode(env, mode) == mode
+    if mode == "off":
+        assert "AVEN_GAMING_MODE" not in env
+    else:
+        assert env["AVEN_GAMING_MODE"] == mode
+    assert env["PATH"] == "/usr/bin"
+
+
+def test_apply_gaming_mode_rejects_invalid_value_without_mutating_env():
+    env = {"AVEN_GAMING_MODE": "existing"}
+    with pytest.raises(ValueError, match="gaming_mode"):
+        apply_gaming_mode(env, "unknown")
+    assert env == {"AVEN_GAMING_MODE": "existing"}
