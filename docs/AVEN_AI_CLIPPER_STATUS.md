@@ -12,32 +12,38 @@ Last updated: 2026-11-27
 Build a web-based AI clipping editor branded as AVEN AI CLIPPER, based on OpenShorts rather than rebuilding the existing application. Preserve upstream features and add creator-focused workflows, especially gaming clips for PUBG/BGMI and Minecraft.
 
 ## Implemented on `aven-gaming-mode`
-1. `dashboard/src/components/MediaInput.jsx`
+1. `README.md`
+   - Brands the fork as AVEN AI CLIPPER, documents PUBG/BGMI and Minecraft profiles as in-development features, and preserves clear upstream OpenShorts attribution.
+2. `dashboard/src/components/MediaInput.jsx`
    - Added a Gaming Mode selector under Advanced Options.
    - Choices: General videos, PUBG / BGMI gameplay, Minecraft gameplay.
    - Sends the selected profile with the upload request.
    - Shows the advanced-options indicator when a gaming profile is selected.
-2. `dashboard/src/App.jsx`
+3. `dashboard/src/App.jsx`
    - Passes `gaming_mode` to the backend for both file and URL submissions.
-3. `app.py`
+4. `app.py`
    - Accepts `gaming_mode` in multipart form and JSON requests.
    - Whitelists values: `off`, `pubg`, `minecraft`.
    - Sets `AVEN_GAMING_MODE` only for an enabled profile and clears inherited profile values first so general-video jobs do not accidentally use a server-wide gaming setting.
-4. `gaming_profiles.py`
+5. `gaming_profiles.py`
    - Extracts gaming mode validation and prompt profiles into a small dependency-light module so they can be tested without importing the heavy video stack.
    - Rejects unsupported values and provides `off`, `pubg`, and `minecraft` profiles.
-5. `main.py`
+6. `main.py`
    - Uses the shared game-aware prompt guidance in transcript scoring, detailed clip selection, and silent-video visual selection.
    - PUBG/BGMI guidance favors genuine clutches, squad wipes, headshots, sprays, sniper shots, final-circle plays, revives, escapes and funny failures; requires setup/payoff and forbids invented outcomes.
    - Minecraft guidance favors builds, redstone, discoveries, transformations, survival clutches, boss fights, speedruns, parkour, funny failures and secrets; forbids invented achievements/events.
 
 ## Important limitations / validation status
 - The GitHub connector successfully wrote these files to the development branch.
-- Added `tests/test_gaming_profiles.py` covering accepted modes, rejected values/aliases, general mode, PUBG and Minecraft prompt guidance, and environment normalization.
+- Added `tests/test_gaming_profiles.py` covering accepted modes, rejected values/aliases, general mode, PUBG and Minecraft prompt guidance, and environment normalization; simplified the accepted-mode test cases after review.
 - Tests have NOT yet been executed in this session. The CI workflow now includes pushes to `aven-gaming-mode`, but GitHub currently reports zero workflow runs for this branch; verify Actions after the next push/PR.
 - The project has NOT yet been built or run locally; frontend compilation, Python syntax/tests, and an end-to-end test with sample gaming footage are still required.
 - Do not claim the app is deployed or production-ready.
 - User's laptop has 8 GB RAM, so local AI inference may be slow; prefer a lightweight frontend test and consider remote/cloud inference for heavy video processing.
+
+## Latest additional work
+- Updated the README to present AVEN AI CLIPPER as the customized fork, explicitly label gaming profiles as in development, and retain upstream attribution.
+- Reviewed and simplified the new unit tests; no test execution has been performed.
 
 ## Next work
 1. Inspect the complete diff and run the project's available frontend and Python tests; confirm GitHub Actions starts on the development branch.
