@@ -52,7 +52,14 @@ export default function MediaInput({ onProcess, isProcessing }) {
     const [targetClips, setTargetClips] = useState('');
     const [clipMinSeconds, setClipMinSeconds] = useState('');
     const [clipMaxSeconds, setClipMaxSeconds] = useState('');
-    const [gamingMode, setGamingMode] = useState('off');
+    const [gamingMode, setGamingMode] = useState(() => {
+        // Keep the creator's last game preset between visits; invalid/stale
+        // values safely fall back to the general profile.
+        try {
+            const saved = localStorage.getItem('aven_gaming_mode');
+            return ['off', 'pubg', 'minecraft'].includes(saved) ? saved : 'off';
+        } catch { return 'off'; }
+    });
     // Auto-hook: burn the AI hook text into every clip. On by default; the
     // choice persists so turning it off sticks across sessions.
     const [autoHook, setAutoHook] = useState(() => {
@@ -139,6 +146,7 @@ export default function MediaInput({ onProcess, isProcessing }) {
             localStorage.setItem('os_auto_hook', autoHook ? '1' : '0');
             localStorage.setItem('os_auto_hook_style_v2', autoHookStyle);
             localStorage.setItem('os_layout', layout);
+            localStorage.setItem('aven_gaming_mode', gamingMode);
         } catch { /* ignore */ }
         if (mode === 'url' && url) {
             onProcess({ type: 'url', payload: url, acknowledged: true, outputFormat, ...advanced });
@@ -332,7 +340,7 @@ export default function MediaInput({ onProcess, isProcessing }) {
                                     <option value="pubg">PUBG / BGMI gameplay</option>
                                     <option value="minecraft">Minecraft gameplay</option>
                                 </select>
-                                <p className="text-[11px] text-muted mt-1">Prioritizes game-specific highlights when AI selects clips.</p>
+                                <p className="text-[11px] text-muted mt-1">Guides AI toward game-specific moments. It does not guarantee every selected clip will be a highlight; review clips before publishing.</p>
                             </div>
                             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-2">
                             <div>
