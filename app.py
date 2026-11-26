@@ -6473,6 +6473,8 @@ async def process_endpoint(
         gaming_mode = normalize_gaming_mode(gaming_mode)
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
+    # Never inherit a server-wide profile into a general-video job.
+    env.pop("AVEN_GAMING_MODE", None)
     if gaming_mode != "off":
         env["AVEN_GAMING_MODE"] = gaming_mode
         print(f"[gaming-mode] job={job_id} profile={gaming_mode}")
