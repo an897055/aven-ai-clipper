@@ -2461,12 +2461,15 @@ def _install_drain_signal_handler():
 def _write_resume_manifest(job_id, cmd, priority, user_id, reservation_id, watermark,
                            webhook_url=None, webhook_secret=None, base_url=None,
                            partial=None, source_cap_minutes=None, skip_statics=False,
-                           via_api_key=False, lane=None, submitted_at=None, topup=False):
+                           via_api_key=False, lane=None, submitted_at=None, topup=False,
+                           gaming_mode="off"):
     try:
         path = os.path.join(OUTPUT_DIR, job_id, _RESUME_FILE)
         # Atomic like every manifest write: the other instance reads them.
         write_json_atomic(path, {
                 "cmd": cmd, "priority": priority,
+                # Preserve the selected game profile when an interrupted job resumes.
+                "gaming_mode": gaming_mode,
                 "user_id": None if user_id is None else str(user_id),
                 "reservation_id": reservation_id,
                 "watermark": bool(watermark), "attempts": 0,
@@ -2628,6 +2631,13 @@ def _register_resumed(picked) -> int:
         # Rebuild env from scratch — the manifest holds no secrets. Managed
         # (cloud) jobs get the server key; self-host falls back to its env key.
         env = child_env()
+        # Older manifests have no profile and resume as general video. Validate
+        # persisted values so a malformed manifest cannot inject arbitrary env.
+        try:
+            apply_gaming_mode(env, m.get("gaming_mode", "off"))
+        except ValueError:
+            print(f"⚠️ Invalid gaming profile in resume manifest for {job_id}; using general mode.")
+            apply_gaming_mode(env, "off")
         try:
             from cloud import proxy_ledger as _pl
             if BILLING_ENABLED and _pl.budget_exceeded_sync():
@@ -6686,7 +6696,8 @@ async def process_endpoint(
                            source_cap_minutes=source_cap, skip_statics=skip_statics,
                            via_api_key=jobs[job_id]['via_api_key'],
                            lane=jobs[job_id]['lane'], submitted_at=jobs[job_id]['submitted_at'],
-                           topup=jobs[job_id]['topup'])
+                           topup=jobs[job_id]['topup'],
+                           gaming_mode=gaming_mode)
 
     _enqueue_job(job_id, priority)
     if _saturation_on():
