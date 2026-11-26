@@ -22,22 +22,26 @@ Build a web-based AI clipping editor branded as AVEN AI CLIPPER, based on OpenSh
 3. `app.py`
    - Accepts `gaming_mode` in multipart form and JSON requests.
    - Whitelists values: `off`, `pubg`, `minecraft`.
-   - Sets `AVEN_GAMING_MODE` only for an enabled profile.
-4. `main.py`
-   - Adds game-aware prompt guidance to transcript scoring, detailed clip selection, and silent-video visual selection.
+   - Sets `AVEN_GAMING_MODE` only for an enabled profile and clears inherited profile values first so general-video jobs do not accidentally use a server-wide gaming setting.
+4. `gaming_profiles.py`
+   - Extracts gaming mode validation and prompt profiles into a small dependency-light module so they can be tested without importing the heavy video stack.
+   - Rejects unsupported values and provides `off`, `pubg`, and `minecraft` profiles.
+5. `main.py`
+   - Uses the shared game-aware prompt guidance in transcript scoring, detailed clip selection, and silent-video visual selection.
    - PUBG/BGMI guidance favors genuine clutches, squad wipes, headshots, sprays, sniper shots, final-circle plays, revives, escapes and funny failures; requires setup/payoff and forbids invented outcomes.
    - Minecraft guidance favors builds, redstone, discoveries, transformations, survival clutches, boss fights, speedruns, parkour, funny failures and secrets; forbids invented achievements/events.
 
 ## Important limitations / validation status
 - The GitHub connector successfully wrote these files to the development branch.
-- No CI status checks were reported for the latest checked commit.
+- Added `tests/test_gaming_profiles.py` covering accepted modes, rejected values/aliases, general mode, PUBG and Minecraft prompt guidance, and environment normalization.
+- Tests have NOT yet been executed. No CI status checks were reported for the latest checked commit.
 - The project has NOT yet been built or run locally; frontend compilation, Python syntax/tests, and an end-to-end test with sample gaming footage are still required.
 - Do not claim the app is deployed or production-ready.
 - User's laptop has 8 GB RAM, so local AI inference may be slow; prefer a lightweight frontend test and consider remote/cloud inference for heavy video processing.
 
 ## Next work
 1. Inspect the complete diff and run the project's available frontend and Python tests.
-2. Add automated tests for the `gaming_mode` request validation and prompt-profile selection.
+2. Run `pytest tests/test_gaming_profiles.py` and the full CI suite; fix any failures before adding more features.
 3. Add a proper Gaming Mode UX (clear preset card, explain what it changes, retain user's last choice).
 4. Test with one PUBG/BGMI recording and one Minecraft recording; verify clip selection is grounded in visible/audio evidence.
 5. Continue branding the visible product as AVEN AI CLIPPER without removing upstream attribution or license notices.
