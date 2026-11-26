@@ -6295,6 +6295,7 @@ async def process_endpoint(
     max_minutes: Optional[str] = Form(None),
     source_start: Optional[str] = Form(None),
     source_end: Optional[str] = Form(None),
+    gaming_mode: Optional[str] = Form(None),
 ):
     api_key = await resolve_gemini(request)
     if not api_key and not (llm_backend.active() and not BILLING_ENABLED):
@@ -6335,6 +6336,7 @@ async def process_endpoint(
         max_minutes = body.get("max_minutes")
         source_start = body.get("source_start")
         source_end = body.get("source_end")
+        gaming_mode = body.get("gaming_mode")
 
     # Normalize output format (auto = keep pipeline default).
     if output_format not in ("vertical", "horizontal", "square"):
@@ -6463,6 +6465,15 @@ async def process_endpoint(
             raise HTTPException(status_code=400,
                                 detail=f"{name} must be between {lo:g} and {hi:g}")
         return int(val) if integer else val
+
+    # Optional gaming-aware highlight selection. Whitelist values so this
+    # request field can only select a known prompt profile.
+    gaming_mode = str(gaming_mode or "off").strip().lower()
+    if gaming_mode not in {"off", "pubg", "minecraft"}:
+        raise HTTPException(status_code=400, detail="gaming_mode must be off, pubg, or minecraft")
+    if gaming_mode != "off":
+        env["AVEN_GAMING_MODE"] = gaming_mode
+        print(f"[gaming-mode] job={job_id} profile={gaming_mode}")
 
     n_clips = _gen_control(target_clips, "target_clips", 1, 15, integer=True)
     min_secs = _gen_control(clip_min_seconds, "clip_min_seconds", 5, 175)
