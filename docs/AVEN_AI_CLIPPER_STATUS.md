@@ -35,7 +35,8 @@ Build a web-based AI clipping editor branded as AVEN AI CLIPPER, based on OpenSh
 
 ## Important limitations / validation status
 - The GitHub connector successfully wrote these files to the development branch.
-- Added `tests/test_gaming_profiles.py` covering accepted modes, rejected values/aliases, general mode, PUBG and Minecraft prompt guidance, and environment normalization; simplified the accepted-mode test cases after review.
+- Added `tests/test_gaming_profiles.py` covering accepted modes, rejected values/aliases, general mode, PUBG and Minecraft prompt guidance, environment normalization, and per-job environment isolation.
+- Added `workflow_dispatch` so CI can also be started manually from GitHub Actions.
 - Tests have NOT yet been executed in this session. The CI workflow now includes pushes to `aven-gaming-mode`, but GitHub currently reports zero workflow runs for this branch; verify Actions after the next push/PR.
 - The project has NOT yet been built or run locally; frontend compilation, Python syntax/tests, and an end-to-end test with sample gaming footage are still required.
 - Do not claim the app is deployed or production-ready.
@@ -48,7 +49,7 @@ Build a web-based AI clipping editor branded as AVEN AI CLIPPER, based on OpenSh
 ## Next work
 1. Inspect the complete diff and run the project's available frontend and Python tests; confirm GitHub Actions starts on the development branch.
 2. Run `pytest tests/test_gaming_profiles.py` and the full CI suite; fix any failures before adding more features.
-3. Add a proper Gaming Mode UX (clear preset card, explain what it changes, retain user's last choice).
+3. Review job recovery so a resumed job retains its selected gaming profile, if the current recovery manifest supports preserving per-job environment settings.
 4. Test with one PUBG/BGMI recording and one Minecraft recording; verify clip selection is grounded in visible/audio evidence.
 5. Continue branding the visible product as AVEN AI CLIPPER without removing upstream attribution or license notices.
 6. Only after tests pass, prepare deployment instructions and ask the user for any required API keys/permissions.
