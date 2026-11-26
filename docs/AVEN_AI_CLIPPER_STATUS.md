@@ -34,13 +34,13 @@ Build a web-based AI clipping editor branded as AVEN AI CLIPPER, based on OpenSh
 ## Important limitations / validation status
 - The GitHub connector successfully wrote these files to the development branch.
 - Added `tests/test_gaming_profiles.py` covering accepted modes, rejected values/aliases, general mode, PUBG and Minecraft prompt guidance, and environment normalization.
-- Tests have NOT yet been executed. No CI status checks were reported for the latest checked commit.
+- Tests have NOT yet been executed in this session. The CI workflow now includes pushes to `aven-gaming-mode`, but GitHub currently reports zero workflow runs for this branch; verify Actions after the next push/PR.
 - The project has NOT yet been built or run locally; frontend compilation, Python syntax/tests, and an end-to-end test with sample gaming footage are still required.
 - Do not claim the app is deployed or production-ready.
 - User's laptop has 8 GB RAM, so local AI inference may be slow; prefer a lightweight frontend test and consider remote/cloud inference for heavy video processing.
 
 ## Next work
-1. Inspect the complete diff and run the project's available frontend and Python tests.
+1. Inspect the complete diff and run the project's available frontend and Python tests; confirm GitHub Actions starts on the development branch.
 2. Run `pytest tests/test_gaming_profiles.py` and the full CI suite; fix any failures before adding more features.
 3. Add a proper Gaming Mode UX (clear preset card, explain what it changes, retain user's last choice).
 4. Test with one PUBG/BGMI recording and one Minecraft recording; verify clip selection is grounded in visible/audio evidence.
