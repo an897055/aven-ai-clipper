@@ -6,6 +6,7 @@ from gaming_profiles import (
     apply_gaming_mode,
     gaming_guidance,
     normalize_gaming_mode,
+    restore_gaming_mode,
 )
 
 
@@ -76,3 +77,27 @@ def test_apply_gaming_mode_rejects_invalid_value_without_mutating_env():
     with pytest.raises(ValueError, match="gaming_mode"):
         apply_gaming_mode(env, "unknown")
     assert env == {"AVEN_GAMING_MODE": "existing"}
+
+
+
+@pytest.mark.parametrize("mode", ["off", "pubg", "minecraft"])
+def test_restore_gaming_mode_from_resume_manifest(mode):
+    env = {"AVEN_GAMING_MODE": "stale"}
+    manifest = {"gaming_mode": mode}
+    assert restore_gaming_mode(env, manifest) == mode
+    if mode == "off":
+        assert "AVEN_GAMING_MODE" not in env
+    else:
+        assert env["AVEN_GAMING_MODE"] == mode
+
+
+def test_restore_legacy_manifest_defaults_to_general_mode():
+    env = {"AVEN_GAMING_MODE": "stale"}
+    assert restore_gaming_mode(env, {"cmd": ["python", "main.py"]}) == "off"
+    assert "AVEN_GAMING_MODE" not in env
+
+
+def test_restore_invalid_manifest_profile_fails_closed_to_general_mode():
+    env = {"AVEN_GAMING_MODE": "stale"}
+    assert restore_gaming_mode(env, {"gaming_mode": "unknown"}) == "off"
+    assert "AVEN_GAMING_MODE" not in env
