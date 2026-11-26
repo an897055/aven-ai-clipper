@@ -24,7 +24,9 @@ Build a web-based AI clipping editor branded as AVEN AI CLIPPER, based on OpenSh
 4. `app.py`
    - Accepts `gaming_mode` in multipart form and JSON requests.
    - Whitelists values: `off`, `pubg`, `minecraft`.
+   - Validates the mode before creating the job directory or allocating processing resources.
    - Sets `AVEN_GAMING_MODE` only for an enabled profile and clears inherited profile values first so general-video jobs do not accidentally use a server-wide gaming setting.
+   - Persists the selected profile in the resume manifest and restores it safely after an interrupted job; legacy/invalid manifests fall back to general mode.
 5. `gaming_profiles.py`
    - Extracts gaming mode validation and prompt profiles into a small dependency-light module so they can be tested without importing the heavy video stack.
    - Rejects unsupported values and provides `off`, `pubg`, and `minecraft` profiles.
