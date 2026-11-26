@@ -52,6 +52,7 @@ export default function MediaInput({ onProcess, isProcessing }) {
     const [targetClips, setTargetClips] = useState('');
     const [clipMinSeconds, setClipMinSeconds] = useState('');
     const [clipMaxSeconds, setClipMaxSeconds] = useState('');
+    const [gamingMode, setGamingMode] = useState('off');
     // Auto-hook: burn the AI hook text into every clip. On by default; the
     // choice persists so turning it off sticks across sessions.
     const [autoHook, setAutoHook] = useState(() => {
@@ -127,6 +128,7 @@ export default function MediaInput({ onProcess, isProcessing }) {
             targetClips: targetClips || null,
             clipMinSeconds: clipMinSeconds || null,
             clipMaxSeconds: clipMaxSeconds || null,
+            gamingMode,
             autoHook,
             autoHookStyle,
             layout,
@@ -322,7 +324,17 @@ export default function MediaInput({ onProcess, isProcessing }) {
                     {showAdvanced && (
                         /* Stacked on a phone: three number fields side by side leaves
                            ~100px each, which crushes both label and value. */
-                        <div className="mt-3 grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-2 animate-fade">
+                        <div className="mt-3 space-y-3 animate-fade">
+                            <div>
+                                <p className="eyebrow mb-1.5">gaming mode</p>
+                                <select value={gamingMode} onChange={(e) => setGamingMode(e.target.value)} className="input-field">
+                                    <option value="off">General videos</option>
+                                    <option value="pubg">PUBG / BGMI gameplay</option>
+                                    <option value="minecraft">Minecraft gameplay</option>
+                                </select>
+                                <p className="text-[11px] text-muted mt-1">Prioritizes game-specific highlights when AI selects clips.</p>
+                            </div>
+                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-2">
                             <div>
                                 <p className="eyebrow mb-1.5">clips to aim for</p>
                                 <input
@@ -403,6 +415,7 @@ export default function MediaInput({ onProcess, isProcessing }) {
                                         afterwards with its hook button.
                                     </p>
                                 )}
+                            </div>
                             </div>
                         </div>
                     )}
