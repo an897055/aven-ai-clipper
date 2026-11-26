@@ -41,7 +41,7 @@ import source_cache
 import yt_account
 import api_role as _api_role
 from jsonfile import write_json_atomic
-from gaming_profiles import apply_gaming_mode, restore_gaming_mode
+from gaming_profiles import apply_gaming_mode, normalize_gaming_mode, restore_gaming_mode
 import fdlimit
 
 load_dotenv()
@@ -6343,6 +6343,13 @@ async def process_endpoint(
         source_start = body.get("source_start")
         source_end = body.get("source_end")
         gaming_mode = body.get("gaming_mode")
+
+    # Validate the selected profile before creating a job directory, reserving
+    # resources, or accepting the source. Invalid values must fail cleanly.
+    try:
+        gaming_mode = normalize_gaming_mode(gaming_mode)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
 
     # Normalize output format (auto = keep pipeline default).
     if output_format not in ("vertical", "horizontal", "square"):
