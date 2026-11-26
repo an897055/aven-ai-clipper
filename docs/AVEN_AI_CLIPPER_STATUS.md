@@ -37,13 +37,15 @@ Build a web-based AI clipping editor branded as AVEN AI CLIPPER, based on OpenSh
 - The GitHub connector successfully wrote these files to the development branch.
 - Added `tests/test_gaming_profiles.py` covering accepted modes, rejected values/aliases, general mode, PUBG and Minecraft prompt guidance, environment normalization, and per-job environment isolation.
 - Added `workflow_dispatch` so CI can also be started manually from GitHub Actions.
-- Tests have NOT yet been executed in this session. The latest commit has zero GitHub check runs/statuses so far; the connector cannot manually dispatch Actions. Confirm whether GitHub Actions is enabled for this fork and inspect the run after a push.
+- Tests have NOT yet been executed in this session. A draft validation PR (#1) was opened from `aven-gaming-mode` to `main` to trigger pull-request CI without merging; it remains unmerged. GitHub still reports zero check runs/statuses, so confirm whether Actions is enabled for this fork.
 - The project has NOT yet been built or run locally; frontend compilation, Python syntax/tests, and an end-to-end test with sample gaming footage are still required.
 - Do not claim the app is deployed or production-ready.
 - User's laptop has 8 GB RAM, so local AI inference may be slow; prefer a lightweight frontend test and consider remote/cloud inference for heavy video processing.
 
 ## Latest additional work
 - Updated the README to present AVEN AI CLIPPER as the customized fork, explicitly label gaming profiles as in development, and retain upstream attribution.
+- Added safe profile restoration for interrupted jobs: the selected mode is written into the resume manifest, restored on restart, and legacy/invalid manifests fall back to General.
+- Moved gaming-mode validation ahead of job-directory creation so invalid API values fail with HTTP 400 before allocating job resources.
 - Reviewed and simplified the new unit tests; no test execution has been performed.
 
 ## Next work
