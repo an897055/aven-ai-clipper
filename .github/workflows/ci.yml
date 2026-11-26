@@ -4,6 +4,7 @@ on:
   push:
     branches: [main, aven-gaming-mode]
   pull_request:
+  workflow_dispatch:
 
 jobs:
   backend-tests:
